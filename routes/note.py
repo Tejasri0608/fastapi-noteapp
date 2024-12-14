@@ -63,3 +63,25 @@ async def create_item(
     except Exception as e:
         print(f"Error adding note: {e}")
         raise HTTPException(status_code=500, detail="Error adding note")
+
+# Route to delete a note
+@note.delete("/{note_id}")
+async def delete_item(note_id: str):
+    try:
+        # Attempt to delete the note
+        result = conn.notes.notes.delete_one({"_id": ObjectId(note_id)})
+
+        # Check if a document was deleted
+        if result.deleted_count == 1:
+            return JSONResponse(
+                status_code=200,
+                content={"success": True, "message": "Note deleted successfully!"}
+            )
+        else:
+            return JSONResponse(
+                status_code=404,
+                content={"success": False, "message": "Note not found."}
+            )
+    except Exception as e:
+        print(f"Error deleting note: {e}")
+        raise HTTPException(status_code=500, detail="Error deleting note")
